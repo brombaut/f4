@@ -67,8 +67,8 @@ class BooksTable extends React.Component<MyProps, MyState> {
             <td>{book.numPages}</td>
             <td>{book.shelf}</td>
             <td>{book.onPage}</td>
-            <td>{book.dateStarted?.getFullYear}</td>
-            <td>{book.dateFinished?.getFullYear}</td>
+            <td>{book.dateStarted?.getFullYear()}</td>
+            <td>{book.dateFinished?.getFullYear()}</td>
             <td>{book.rating}</td>
           </tr>
         )
