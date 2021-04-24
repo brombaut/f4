@@ -3,7 +3,7 @@ import './App.css';
 import MainBanner from "./bookshelf/components/MainBanner/MainBanner";
 import BooksTable from "./bookshelf/components/BooksTable/BooksTable";
 import BulkAdd from "./bookshelf/components/BulkAdd/BulkAdd";
-
+import { Route, Switch, Redirect, BrowserRouter } from "react-router-dom";
 
 class App extends React.Component {
 
@@ -11,8 +11,20 @@ class App extends React.Component {
     return (
       <div className="App">
         <MainBanner />
-        <BulkAdd />
-        <BooksTable />
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/">
+              <BooksTable />
+            </Route>
+            <Route path="/books">
+              <BooksTable />
+            </Route>
+            <Route path="/bulk-add">
+              <BulkAdd />
+            </Route>
+            <Redirect to="/books" />
+          </Switch>
+        </BrowserRouter>
       </div>
     );
   }

@@ -14,8 +14,8 @@ class MainBanner extends React.Component {
           </div>
         </Navbar.Brand>
         <Nav className="mr-auto">
-          <Nav.Link href="#home">Home</Nav.Link>
-          <Nav.Link href="#bulk-add">Bulk Add</Nav.Link>
+          <Nav.Link href="books">Home</Nav.Link>
+          <Nav.Link href="bulk-add">Bulk Add</Nav.Link>
         </Nav>
       </Navbar>
     );
