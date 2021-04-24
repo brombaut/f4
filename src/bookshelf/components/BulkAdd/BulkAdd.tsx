@@ -4,6 +4,7 @@ import { Button, Form } from "react-bootstrap";
 import { F3Bookshelf } from "../../types/F3Bookshelf";
 import { FirestoreBook } from "../../types/FirestoreBook";
 import { Shelf } from "../../types/Shelf";
+import AlertDismissible from "../AlertDismissible/AlertDismissible";
 import "./BulkAdd.css"
 
 interface MyProps {
@@ -11,6 +12,14 @@ interface MyProps {
 
 interface MyState {
   value: string;
+  successes: {
+    header: string,
+    bookStrings: string[]
+  },
+  failures: {
+    header: string,
+    bookStrings: string[]
+  },
 }
 
 type BulkAddBook = {
@@ -72,10 +81,20 @@ class BulkAdd extends React.Component<MyProps, MyState> {
   constructor(props: MyProps) {
     super(props);
     this.state = {
-      value: s
+      value: s,
+      successes: {
+        header: 'Successfully Created Books',
+        bookStrings: []
+      },
+      failures: {
+        header: 'Failure Creating Books',
+        bookStrings: [],
+      }
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.clearSuccesses = this.clearSuccesses.bind(this);
+    this.clearFailures = this.clearFailures.bind(this);
   }
 
   handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
@@ -87,15 +106,30 @@ class BulkAdd extends React.Component<MyProps, MyState> {
     const jsonGoodreadsBooks = JSON.parse(this.state.value);
     const firestoreBooks = jsonGoodreadsBooks.map(this.translateBulkAddBookToFirestoreBook);
     const bookshelf = new F3Bookshelf();
-    // TODO: Show success and error messages
+    this.clearSuccesses()
+    this.clearFailures()
+    const localState = {...this.state}
     for(const fsb of firestoreBooks) {
       try {
         const newBook = await bookshelf.post(fsb);
-        console.log(newBook);
+        localState.successes.bookStrings.push(`${newBook.id} - ${newBook.isbn13} - ${newBook.title}`)
       } catch (e) {
-        console.error(e);
+        localState.failures.bookStrings.push(`${fsb.isbn13} - ${fsb.title}`)
       }
     }
+    this.setState({...localState});
+  }
+
+  clearSuccesses(): void {
+    const localState = {...this.state}
+    localState.successes.bookStrings = [];
+    this.setState({...localState});
+  }
+
+  clearFailures(): void {
+    const localState = {...this.state}
+    localState.failures.bookStrings = [];
+    this.setState({...localState});
   }
 
   translateBulkAddBookToFirestoreBook(bab: BulkAddBook): FirestoreBook {
@@ -136,6 +170,18 @@ class BulkAdd extends React.Component<MyProps, MyState> {
     return (
       <div>
         <h1>Bulk Add</h1>
+        <AlertDismissible
+          show={this.state.successes.bookStrings.length > 0}
+          type="success"
+          header={this.state.successes.header}
+          content={this.state.successes.bookStrings.join(' ')}
+          dismissCallback={this.clearSuccesses}/>
+        <AlertDismissible
+          show={this.state.failures.bookStrings.length > 0}
+          type="danger"
+          header={this.state.failures.header}
+          content={this.state.failures.bookStrings.join('<br>')}
+          dismissCallback={this.clearFailures}/>
         <Form className="bulk-add-form" onSubmit={this.handleSubmit}>
           <Form.Group controlId="exampleForm.ControlTextarea1">
             <Form.Label>Goodreads Book JSON</Form.Label>

@@ -17,6 +17,14 @@ export class F3Bookshelf implements F3Interfacer<Book> {
   async getById(id: string): Promise<Book> {
     return await this._f3.getById(id);
   }
+  async getByISBN(isbn: string): Promise<Book> {
+    const existingBooks = await this.get();
+    const book = existingBooks.find((b: Book) => b.isbn13 === isbn);
+    if (!book) {
+      throw new Error(`Book not found with ISBN ${isbn}`);
+    }
+    return book;
+  }
   async put(t: Book): Promise<Book> {
     return await this._f3.put(t);
   }
