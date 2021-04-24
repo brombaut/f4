@@ -1,5 +1,5 @@
 .App {
-  text-align: center;
+  text-align: left;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -21,4 +21,12 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.main-content {
+  margin: 0 32px;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  text-align: center;
 }

@@ -11,20 +11,22 @@ class App extends React.Component {
     return (
       <div className="App">
         <MainBanner />
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/">
-              <BooksTable />
-            </Route>
-            <Route path="/books">
-              <BooksTable />
-            </Route>
-            <Route path="/bulk-add">
-              <BulkAdd />
-            </Route>
-            <Redirect to="/books" />
-          </Switch>
-        </BrowserRouter>
+        <div className='main-content'>
+          <BrowserRouter>
+            <Switch>
+              <Route exact path="/">
+                <BooksTable />
+              </Route>
+              <Route path="/books">
+                <BooksTable />
+              </Route>
+              <Route path="/bulk-add">
+                <BulkAdd />
+              </Route>
+              <Redirect to="/books" />
+            </Switch>
+          </BrowserRouter>
+        </div>
       </div>
     );
   }
