@@ -1,0 +1,10 @@
+table {
+  font-size: 0.8rem;
+}
+
+.actions-cell {
+  display: flex;
+}
+.actions-cell button {
+  margin: 0 2px;
+}

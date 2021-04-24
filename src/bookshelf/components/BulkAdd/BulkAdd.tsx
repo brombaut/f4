@@ -174,7 +174,7 @@ class BulkAdd extends React.Component<MyProps, MyState> {
           show={this.state.successes.bookStrings.length > 0}
           type="success"
           header={this.state.successes.header}
-          content={this.state.successes.bookStrings.join(' ')}
+          content={this.state.successes.bookStrings.join('<br>')}
           dismissCallback={this.clearSuccesses}/>
         <AlertDismissible
           show={this.state.failures.bookStrings.length > 0}

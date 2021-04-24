@@ -6,7 +6,7 @@ import './MainBanner.css';
 class MainBanner extends React.Component {
   render() {
     return (
-      <Navbar bg="light" expand="lg">
+      <Navbar bg="dark" variant="dark" expand="lg">
         <Navbar.Brand>
           <div className='brand-name'>
             <h5 className='primary-name'><b>[F4]</b></h5>
