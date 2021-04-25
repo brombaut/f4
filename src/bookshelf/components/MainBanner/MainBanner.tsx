@@ -9,8 +9,7 @@ class MainBanner extends React.Component {
       <Navbar bg="dark" variant="dark" expand="lg">
         <Navbar.Brand>
           <div className='brand-name'>
-            <h5 className='primary-name'><b>[F4]</b></h5>
-            <h6 className='secondary-name'><i>Firebase Firestore Facade Frontend</i></h6>
+            <b>F</b>irebase <b>F</b>irestore <b>F</b>acade <b>F</b>rontend
           </div>
         </Navbar.Brand>
         <Nav className="mr-auto">
