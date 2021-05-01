@@ -79,9 +79,11 @@ export class Book implements ILocalType {
   get shortTitle(): string {
     return this._shortTitle;
   }
-    // TODO: Add formatted authors getter
   get authors(): string[] {
     return this._authors;
+  }
+  get authorsString(): string {
+    return this._authors.join(', ');
   }
   get numPages(): number {
     return this._numPages;
@@ -95,13 +97,23 @@ export class Book implements ILocalType {
   get onPage(): number | null {
     return this._onPage;
   }
-  // TODO: Add formatted date getter
   get dateStarted(): Date | null {
     return this._dateStarted;
   }
-  // TODO: Add formatted date getter
+  get dateStartedFormatted(): string {
+    if (!this.dateStarted) {
+      return '';
+    }
+    return `${this.dateStarted.getDate()}/${this.dateStarted.getMonth()+1}/${this.dateStarted.getFullYear()}`
+  }
   get dateFinished(): Date | null {
     return this._dateFinished;
+  }
+  get dateFinishedFormatted(): string {
+    if (!this.dateFinished) {
+      return '';
+    }
+    return `${this.dateFinished.getDate()}/${this.dateFinished.getMonth()+1}/${this.dateFinished.getFullYear()}`
   }
   get rating(): number | null {
     return this._rating;

@@ -1,17 +1,19 @@
 import React from 'react';
+import { Button } from "react-bootstrap";
+import { PencilSquare, Trash } from "react-bootstrap-icons";
+import { IDataTableColumn } from "react-data-table-component";
 import { Book } from "../../types/Book";
 import { F3Bookshelf } from "../../types/F3Bookshelf";
-import F4Table from "./F4Table";
 import './BooksTable.css';
 import ModelDelete from "./ModelDelete";
+import ReactDataTable from "./ReactDataTable";
 
 interface MyProps {
 }
 
 interface MyState {
   books: Book[];
-  bookRows: string[][];
-  bookHeaders: string[];
+  bookTableColumns: IDataTableColumn[];
   bookshelf: F3Bookshelf;
   deleteBook: Book | undefined;
 }
@@ -22,18 +24,86 @@ class BooksTable extends React.Component<MyProps, MyState> {
     super(props)
     this.state = {
       books: [],
-      bookRows: [],
-      bookHeaders: [
-        'id',
-        'isbn13',
-        'title',
-        'authors',
-        'numPages',
-        'shelf',
-        'onPage',
-        'dateStarted',
-        'dateFinished',
-        'rating',
+      bookTableColumns: [
+        {
+          name: 'ID',
+          selector: 'id',
+          sortable: false,
+          grow: 1,
+        },
+        {
+          name: 'ISBN13',
+          selector: 'isbn13',
+          sortable: false,
+          grow: 1,
+        },
+        {
+          name: 'Title',
+          selector: 'title',
+          sortable: false,
+          wrap: true,
+          grow: 3,
+        },
+        {
+          name: 'Authors',
+          selector: 'authorsString',
+          sortable: false,
+          wrap: true,
+          grow: 1,
+        },
+        {
+          name: 'Shelf',
+          selector: 'shelf',
+          sortable: false,
+          grow: 1,
+        },
+        {
+          name: 'On Page',
+          selector: 'onPage',
+          sortable: false,
+          hide: 'lg',
+          grow: 1,
+        },
+        {
+          name: 'Num Pages',
+          selector: 'numPages',
+          sortable: false,
+          hide: 'lg',
+          grow: 1,
+        },
+        {
+          name: 'Date Started',
+          selector: 'dateStartedFormatted',
+          sortable: false,
+          hide: 'lg',
+          grow: 1,
+        },
+        {
+          name: 'Date Finished',
+          selector: 'dateFinishedFormatted',
+          sortable: false,
+          hide: 'lg',
+          grow: 1,
+        },
+        {
+          name: 'Rating',
+          selector: 'rating',
+          sortable: false,
+          hide: 'lg',
+          grow: 1,
+        },
+        {
+          name: 'Actions',
+          sortable: true,
+          cell: (row: Book) => {
+            return (
+              <div className='actions-cell'>
+                <Button variant="warning"><PencilSquare /></Button>
+                <Button variant="danger" onClick={() => this.confirmDeleteBook(row.id)}><Trash /></Button>
+              </div>
+            )
+          },
+        },
       ],
       bookshelf: new F3Bookshelf(),
       deleteBook: undefined,
@@ -46,36 +116,9 @@ class BooksTable extends React.Component<MyProps, MyState> {
 
   async loadBookshelf() {
     const books: Book[] = await this.state.bookshelf.get();
-    const bookRows: string[][] = this.buildBookRows(books);
     const localState = {...this.state};
     localState.books = books;
-    localState.bookRows = bookRows;
     this.setState(localState)
-  }
-
-  buildBookRows(books: Book[]): string[][] {
-    const bookRows: string[][] = books.map((book: Book) => {
-      const formatDate = (d: Date | null) => {
-        if (!d) {
-          return null
-        }
-        return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`
-      }
-      const row = [
-        `${book.id}`,
-        `${book.isbn13}`,
-        `${book.title}`,
-        `${book.authors.join(', ')}`,
-        `${book.numPages}`,
-        `${book.shelf}`,
-        `${book.onPage}`,
-        `${formatDate(book.dateStarted)}`,
-        `${formatDate(book.dateFinished)}`,
-        `${book.rating}`,
-      ];
-      return row;
-    });
-    return bookRows;
   }
 
   confirmDeleteBook(id: string) {
@@ -86,14 +129,12 @@ class BooksTable extends React.Component<MyProps, MyState> {
   }
 
   cancelDeleteBook() {
-    console.log('CANCEL');
     const localState = {...this.state};
     localState.deleteBook = undefined;
     this.setState(localState)
   }
 
   async deleteBook(id: string) {
-    console.log('delete');
     const bookToDelete = this.state.books.find((b: Book) => b.id === id);
     if (!bookToDelete) {
       throw new Error('Attempting to delete book that was not found');
@@ -102,7 +143,6 @@ class BooksTable extends React.Component<MyProps, MyState> {
     const localState = {...this.state};
     localState.deleteBook = undefined;
     localState.books = localState.books.filter((b: Book) => b.id !== id);
-    localState.bookRows = this.buildBookRows(localState.books);
     this.setState(localState)
   }
 
@@ -113,18 +153,17 @@ class BooksTable extends React.Component<MyProps, MyState> {
   render() {
     return (
       <div className="books-table">
-        <h1>Books</h1>
         {
-          this.state.bookRows.length === 0 &&
+          this.state.books.length === 0 &&
           <p>Loading...</p>
         }
         {
-          this.state.bookRows.length > 0 &&
-          <F4Table
-            headers={this.state.bookHeaders}
-            rows={this.state.bookRows}
-            deleteCallback={this.confirmDeleteBook}
-            />
+          this.state.books.length > 0 &&
+          <ReactDataTable<Book>
+            title='Books'
+            columns={this.state.bookTableColumns}
+            data={this.state.books}
+          />
         }
         {
           !!this.state.deleteBook &&
