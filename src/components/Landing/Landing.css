@@ -1,0 +1,12 @@
+#landing {
+  margin: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#edit-config-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}

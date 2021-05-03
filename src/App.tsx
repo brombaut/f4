@@ -1,7 +1,9 @@
 import React from 'react';
 import './App.css';
-import MainBanner from "./bookshelf/components/MainBanner/MainBanner";
-import Landing from "./bookshelf/components/Landing/Landing";
+import MainBanner from "./components/MainBanner/MainBanner";
+import Landing from "./components/Landing/Landing";
+import AddFirebaseConfig from "./components/AddFirebaseConfig/AddFirebaseConfig";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 class App extends React.Component {
 
@@ -10,7 +12,16 @@ class App extends React.Component {
       <div className="App">
         <MainBanner />
         <div className='main-content'>
-          <Landing />
+        <Router>
+          <Switch>
+            <Route path="/add-config">
+              <AddFirebaseConfig />
+            </Route>
+            <Route path="/">
+              <Landing />
+            </Route>
+          </Switch>
+        </Router>
         </div>
       </div>
     );
