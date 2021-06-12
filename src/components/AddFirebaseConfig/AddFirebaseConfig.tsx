@@ -15,24 +15,22 @@ interface MyState {
 };
 
 class AddFirebaseConfig extends React.Component<MyProps, MyState> {
-  // const history = useHistory();
-
   constructor(props: MyProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.hideAlerts = this.hideAlerts.bind(this);
-    if (localStorage.getItem('firebaseConfig')) {
+
+    this.state = {
+      config: null,
+      showSuccess: false,
+      showFailure: false
+    };
+    const localStorageFirebaseConfig = localStorage.getItem('firebaseConfig');
+    if (localStorageFirebaseConfig) {
       this.state = {
-        config: JSON.parse(localStorage.getItem('firebaseConfig') || '') as FirebaseConfigurer,
-        showSuccess: false,
-        showFailure: false
-      };
-    } else {
-      this.state = {
-        config: null,
-        showSuccess: false,
-        showFailure: false
-      };
+        ...this.state,
+        config: JSON.parse(localStorageFirebaseConfig) as FirebaseConfigurer
+      }
     }
   }
 
