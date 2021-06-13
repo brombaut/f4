@@ -5,25 +5,31 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import './AddFirebaseConfig.css';
 import AlertDismissible from "../AlertDismissible/AlertDismissible";
 
+
+enum ActionStatus {
+  None = 1,
+  Success,
+  Failure
+}
 interface MyProps {
 };
 
 interface MyState {
   config: FirebaseConfigurer | null;
-  showSuccess: boolean;
-  showFailure: boolean;
+  saveStatus: ActionStatus;
 };
 
 class AddFirebaseConfig extends React.Component<MyProps, MyState> {
+  configForm: React.RefObject<HTMLFormElement>;
   constructor(props: MyProps) {
     super(props);
+    this.configForm = React.createRef();
     this.handleSubmit = this.handleSubmit.bind(this);
     this.hideAlerts = this.hideAlerts.bind(this);
 
     this.state = {
       config: null,
-      showSuccess: false,
-      showFailure: false
+      saveStatus: ActionStatus.None,
     };
     const localStorageFirebaseConfig = localStorage.getItem('firebaseConfig');
     if (localStorageFirebaseConfig) {
@@ -36,30 +42,32 @@ class AddFirebaseConfig extends React.Component<MyProps, MyState> {
 
   hideAlerts() {
     this.setState({
-      showSuccess: false,
-      showFailure: false
+      saveStatus: ActionStatus.None,
     });
   }
 
   handleSubmit(e: FormEvent<HTMLFormElement>) {
     try {
       e.preventDefault();
-      const newConfig = this.configFromForm(e.currentTarget);
+      const newConfig = this.configFromForm();
       localStorage.setItem('firebaseConfig', JSON.stringify(newConfig))
       this.setState({
-        showSuccess: true,
-        showFailure: false
+        saveStatus: ActionStatus.Success,
       });
     } catch {
       this.setState({
-        showSuccess: false,
-        showFailure: true
+        saveStatus: ActionStatus.Failure,
       });
     }
 
   }
 
-  configFromForm(f: HTMLFormElement) {
+  configFromForm() {
+    const f = this.configForm.current;
+    if (!f) {
+      throw new Error('Form not found');
+    }
+    console.log(f);
     const result: FirebaseConfigurer = {
       apiKey: this.namedItemFromForm(f, 'formApiKey'),
       authDomain: this.namedItemFromForm(f, 'formAuthDomain'),
@@ -91,7 +99,8 @@ class AddFirebaseConfig extends React.Component<MyProps, MyState> {
         <h1>Update Firebase Config</h1>
         <Form
           className='mt-4'
-          onSubmit={this.handleSubmit}>
+          onSubmit={this.handleSubmit}
+          ref={this.configForm}>
           <Form.Group as={Row} controlId="formApiKey">
             <Col sm={lrPad} />
             <Form.Label column sm={labelCol}>API Key</Form.Label>
@@ -220,9 +229,7 @@ class AddFirebaseConfig extends React.Component<MyProps, MyState> {
             </Col>
             <Col sm={6} />
             <Col sm={1}>
-              <Button variant="primary" type="submit">
-                Save
-              </Button>
+              <Button variant="primary" type="submit">Save</Button>
             </Col>
             <Col sm={2} />
           </Row>
@@ -230,7 +237,7 @@ class AddFirebaseConfig extends React.Component<MyProps, MyState> {
             <Col sm={2} />
             <Col sm={8}>
               <AlertDismissible
-                show={this.state.showSuccess}
+                show={this.state.saveStatus === ActionStatus.Success}
                 type="success"
                 header='Config saved to local storage'
                 content=''
@@ -242,7 +249,7 @@ class AddFirebaseConfig extends React.Component<MyProps, MyState> {
             <Col sm={2} />
             <Col sm={8}>
               <AlertDismissible
-                show={this.state.showFailure}
+                show={this.state.saveStatus === ActionStatus.Failure}
                 type="danger"
                 header='Error: Could not save config to local storage'
                 content=''
